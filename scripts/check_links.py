@@ -5,9 +5,12 @@ For each catalog entry, probes source.canonical_url and reports whether the
 declared `status` still matches reality. Read-only: prints a report and exits
 non-zero if any `live`/`frozen` entry is actually unreachable.
 
-The User-Agent is built from almanac.config.yml (slug + homepage) so the agencies
-you probe can see which catalog is checking their links. Uses curl for reliable
-wall-clock timeouts.
+The primary User-Agent is built from almanac.config.yml (slug + homepage) so the
+agencies you probe can see which catalog is checking their links. Some agencies
+(e.g. BLS, the Census data portal, Congress.gov) block non-browser agents with a
+403/406/429 — so a blocked response triggers ONE retry with a common browser
+User-Agent. A bot block is not an outage; this keeps the monitor from crying wolf.
+Uses curl for reliable wall-clock timeouts.
 """
 from __future__ import annotations
 
@@ -23,6 +26,12 @@ ROOT = Path(__file__).resolve().parent.parent
 CATALOG = ROOT / "catalog"
 CONFIG = ROOT / "almanac.config.yml"
 DEFAULT_TIMEOUT = 12
+BROWSER_UA = (
+    "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/124.0 Safari/537.36"
+)
+# Status codes that usually mean "you are not a browser" rather than "gone".
+BLOCK_CODES = {401, 403, 406, 429}
 
 
 def _user_agent() -> str:
@@ -38,25 +47,33 @@ def _user_agent() -> str:
 UA = _user_agent()
 
 
-def _probe(url: str, timeout: float) -> tuple[int | None, str]:
-    """Return (http_status, note). None status = connection failed."""
-    if not shutil.which("curl"):
-        raise SystemExit("check_links.py requires curl on PATH")
-
-    cmd = ["curl","-sS","-o","/dev/null","-w","%{http_code}","--max-time",str(int(timeout)),"-A",UA,"-L",url]
+def _curl(url: str, timeout: float, ua: str) -> tuple[int | None, str]:
+    cmd = ["curl", "-sS", "-o", "/dev/null", "-w", "%{http_code}",
+           "--max-time", str(int(timeout)), "-A", ua, "-L", url]
     try:
         proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout + 5, check=False)
     except subprocess.TimeoutExpired:
         return None, f"timeout>{timeout + 5}s"
-
     if proc.returncode != 0 and not proc.stdout.strip().isdigit():
         err = (proc.stderr or proc.stdout or "curl failed").strip().splitlines()[-1]
         return None, err[:120]
-
     raw = proc.stdout.strip()
     if not raw.isdigit():
         return None, raw or "no status code"
-    return int(raw), url
+    return int(raw), ""
+
+
+def _probe(url: str, timeout: float) -> tuple[int | None, str]:
+    """Probe with the almanac UA; retry once as a browser if the host blocks bots."""
+    if not shutil.which("curl"):
+        raise SystemExit("check_links.py requires curl on PATH")
+    code, note = _curl(url, timeout, UA)
+    if code in BLOCK_CODES:
+        bcode, bnote = _curl(url, timeout, BROWSER_UA)
+        if bcode is not None and bcode < 400:
+            return bcode, f"ok via browser-UA (almanac-UA got {code})"
+        return (bcode if bcode is not None else code), (bnote or f"blocked ({code})")
+    return code, note
 
 
 def main() -> int:
