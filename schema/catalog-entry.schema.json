@@ -35,7 +35,7 @@
       "properties": {
         "spatial": { "type": "string", "description": "e.g. global, national, a named region." },
         "temporal": { "type": "string", "description": "e.g. '1850-present'." },
-        "cadence": { "enum": ["daily","weekly","monthly","seasonal","annual","event","static","irregular"], "description": "Update frequency." }
+        "cadence": { "enum": ["daily","weekly","monthly","quarterly","seasonal","annual","event","static","irregular"], "description": "Update frequency." }
       }
     },
     "license": { "type": "string", "description": "e.g. 'public-domain (US Gov work)', 'CC-BY-4.0'." },
