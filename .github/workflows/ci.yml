@@ -24,3 +24,7 @@ jobs:
             echo "::error::catalog.json is stale — run 'python scripts/build_index.py' and commit the result."
             exit 1
           fi
+      - name: Run tests
+        run: |
+          pip install pytest
+          pytest -q
