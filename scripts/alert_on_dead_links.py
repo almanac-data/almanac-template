@@ -33,6 +33,7 @@ import argparse
 import json
 import os
 import sys
+import time
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -76,9 +77,20 @@ class GitHub:
         req.add_header("X-GitHub-Api-Version", "2022-11-28")
         if data is not None:
             req.add_header("Content-Type", "application/json")
-        with urllib.request.urlopen(req) as resp:
-            raw = resp.read()
-            return json.loads(raw) if raw else {}
+        last_err = None
+        for attempt in range(3):
+            try:
+                with urllib.request.urlopen(req) as resp:
+                    raw = resp.read()
+                    return json.loads(raw) if raw else {}
+            except urllib.error.HTTPError as e:
+                if e.code < 500:
+                    raise
+                last_err = e  # transient server error — retry
+            except urllib.error.URLError as e:
+                last_err = e  # network blip — retry
+            time.sleep(2 * (attempt + 1))
+        raise last_err
 
     def ensure_labels(self) -> None:
         if self.dry_run:
@@ -88,8 +100,12 @@ class GitHub:
                 self._req("POST", f"/repos/{self.repo}/labels",
                           {"name": name, "color": color, "description": desc})
             except urllib.error.HTTPError as e:
-                if e.code != 422:  # 422 = already exists
-                    raise
+                # 422 = already exists. Don't crash the whole monitor if label
+                # setup hits a transient error or perms issue — it's best-effort.
+                if e.code != 422:
+                    print(f"warning: could not ensure label {name!r}: HTTP {e.code}", file=sys.stderr)
+            except urllib.error.URLError as e:
+                print(f"warning: could not ensure label {name!r}: {e}", file=sys.stderr)
 
     def open_automated_issues(self) -> list[dict]:
         """All open issues carrying the endpoint-dead label (paginated).
