@@ -2,14 +2,19 @@
 """Reachability checker — the seed of automated monitoring.
 
 For each catalog entry, probes source.canonical_url and reports whether the
-declared `status` still matches reality. Read-only: prints a report and exits
-non-zero if any `live`/`frozen` entry is actually unreachable.
+declared `status` still matches reality. Read-only.
 
-The primary User-Agent is built from almanac.config.yml (slug + homepage) so the
-agencies you probe can see which catalog is checking their links. Some agencies
-(e.g. BLS, the Census data portal, Congress.gov) block non-browser agents with a
-403/406/429 — so a blocked response triggers ONE retry with a common browser
-User-Agent. A bot block is not an outage; this keeps the monitor from crying wolf.
+User-Agent is built from almanac.config.yml (slug + homepage) so agencies can see
+who is checking. Two refinements keep the monitor from crying wolf at bot defenses:
+
+  1. Browser-UA retry. A block code (401/403/406/429) triggers one retry with a
+     common browser User-Agent — some hosts only sniff the UA.
+  2. Blocked != dead. If a host still returns a block code after the retry, the
+     source is reported as *blocked / unverifiable* — NOT flagged as an outage.
+     Many federal hosts (BLS, Census, Congress.gov, SEC, GAO) sit behind CDN bot
+     protection that no command-line client can satisfy; a 403 there is not a 404.
+     Only genuine failures (404, 5xx, connection/timeout) flag an entry.
+
 Uses curl for reliable wall-clock timeouts.
 """
 from __future__ import annotations
@@ -30,7 +35,6 @@ BROWSER_UA = (
     "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
     "Chrome/124.0 Safari/537.36"
 )
-# Status codes that usually mean "you are not a browser" rather than "gone".
 BLOCK_CODES = {401, 403, 406, 429}
 
 
@@ -72,7 +76,10 @@ def _probe(url: str, timeout: float) -> tuple[int | None, str]:
         bcode, bnote = _curl(url, timeout, BROWSER_UA)
         if bcode is not None and bcode < 400:
             return bcode, f"ok via browser-UA (almanac-UA got {code})"
-        return (bcode if bcode is not None else code), (bnote or f"blocked ({code})")
+        c = bcode if bcode is not None else code
+        if c in BLOCK_CODES:
+            return c, f"blocked by bot protection ({c}) — cannot auto-verify"
+        return c, bnote or f"http {c}"
     return code, note
 
 
@@ -90,18 +97,23 @@ def main() -> int:
         url = entry.get("source", {}).get("canonical_url")
         declared = entry.get("status")
         code, note = _probe(url, args.timeout)
+        blocked = code in BLOCK_CODES
         reachable = code is not None and code < 400
-        flagged = declared in ("live", "frozen") and not reachable
+        # Dead = a definitive failure (404 / 5xx / connection / timeout).
+        # A host that merely blocks our bot is unverifiable, not dead.
+        dead = (not reachable) and (not blocked)
+        flagged = declared in ("live", "frozen") and dead
         if flagged:
             problems += 1
         report.append({"id": entry.get("id"), "url": url, "declared_status": declared,
-                       "http": code, "reachable": reachable, "flagged": flagged, "note": note})
+                       "http": code, "reachable": reachable, "blocked": blocked,
+                       "flagged": flagged, "note": note})
 
     if args.json:
         print(json.dumps(report, indent=2))
     else:
         for r in report:
-            mark = "FLAG" if r["flagged"] else ("ok  " if r["reachable"] else "warn")
+            mark = "FLAG" if r["flagged"] else ("blok" if r["blocked"] else ("ok  " if r["reachable"] else "warn"))
             print(f"[{mark}] {r['id']:34} status={r['declared_status']:8} http={r['http']}  {r['note']}")
         print(f"\n{problems} entr{'y' if problems == 1 else 'ies'} declared live/frozen but unreachable")
     return 1 if problems else 0
