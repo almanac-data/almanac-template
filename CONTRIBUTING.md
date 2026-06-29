@@ -1,13 +1,13 @@
-# Contributing to Climate Almanac
+# Contributing
 
-Thank you for helping keep public climate data findable. Contributions are deliberately small and
+Thank you for helping keep public data findable. Contributions are deliberately small and
 reviewable: **one dataset = one file = one pull request.**
 
 ## Add a dataset
 
-1. Copy an existing entry from `catalog/` as a starting point.
+1. Copy `catalog/example-dataset.yaml` as a starting point.
 2. Create `catalog/<your-id>.yaml`. The filename (minus `.yaml`) **must** equal the entry's `id`,
-   which is a kebab-case slug (e.g. `noaa-sea-level-rise`).
+   a kebab-case slug (e.g. `agency-sea-level-rise`).
 3. Fill in every required field (see `schema/catalog-entry.schema.json`). Required:
    `id, title, description, publisher, topics, source, access, license, attribution, status,
    last_checked`.
@@ -16,8 +16,12 @@ reviewable: **one dataset = one file = one pull request.**
    ```bash
    pip install -r requirements.txt
    python scripts/validate.py
+   python scripts/build_index.py
    ```
 6. Open a PR. CI runs validation; a green check is required to merge.
+
+No coding? You can also **[suggest a dataset](../../issues/new/choose)** with a short form and a
+curator will turn it into an entry.
 
 ## Status values
 
@@ -32,7 +36,7 @@ Set `status` honestly based on what you actually observe:
 | `mirrored` | this project (or a partner) hosts a copy in `archive.mirror`   |
 
 If you mark something `dark` or `frozen`, add a note in `notes` explaining what you found, and if
-possible a `archive.wayback_url`.
+possible an `archive.wayback_url`.
 
 ## Curation principles
 

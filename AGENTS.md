@@ -1,36 +1,41 @@
-# Agent guide — Climate Almanac
+# Agent guide — Almanac vertical
 
 Instructions for any AI coding agent (Claude Code, Codex, Cursor, compatible CLIs)
-working in this repository. Read this before making changes.
+working in an Almanac catalog repository. Read this before making changes.
 
 ## What this project is
 
-Climate Almanac is an **open, versioned index of public climate data** — a catalog,
-not a data warehouse. Each entry in `catalog/` is a human-reviewed, machine-validated
-record pointing to an authoritative climate dataset (canonical source, how to access it,
-where it's archived, and whether it's still reachable). It exists because climate.gov was
-decommissioned and the curation/reachability layer it provided was lost.
+An Almanac is an **open, versioned index of public data** — a catalog, not a data warehouse.
+Each entry in `catalog/` is a human-reviewed, machine-validated record pointing to an
+authoritative dataset (canonical source, how to access it, where it's archived, and whether
+it's still reachable). It exists to be the curation-and-reachability layer that scattered
+public data lacks.
+
+This repository was built from `almanac-template`. The vertical's identity (name, domain,
+homepage) lives in `almanac.config.yml`; the schema, scripts, and CI are domain-agnostic and
+read from it. **Do not hardcode domain-specific names into the engine** — put them in config.
 
 ## The one rule that defines the project
 
-**Catalog, don't host.** This repo maps data; it does not store data bytes. Do not add
-datasets, CSVs, NetCDF, GeoTIFFs, or any data payload to the repo. The *only* exception is
-a deliberate, small, at-risk artifact mirrored under an entry's `archive.mirror` field —
-and only after it's been discussed in an issue. If a task tempts you to commit data, stop:
-the answer is almost always a catalog entry pointing to where the data lives.
+**Catalog, don't host.** This repo maps data; it does not store data bytes. Do not add datasets,
+CSVs, NetCDF, GeoTIFFs, or any data payload to the repo. The *only* exception is a deliberate,
+small, at-risk artifact mirrored under an entry's `archive.mirror` field — and only after it's
+been discussed in an issue. If a task tempts you to commit data, stop: the answer is almost
+always a catalog entry pointing to where the data lives.
 
 ## Repository map
 
 ```
+almanac.config.yml                 this vertical's identity (name/slug/description/homepage/domain)
 schema/catalog-entry.schema.json   the contract every entry must satisfy (JSON Schema 2020-12)
 catalog/<id>.yaml                  one curated dataset per file (source of truth)
 catalog.json                       GENERATED build artifact — do not hand-edit
 scripts/validate.py                schema + filename==id + uniqueness checks (CI gate)
 scripts/build_index.py             catalog/*.yaml -> catalog.json
 scripts/check_links.py             reachability checker (read-only; reports, never rewrites)
-scripts/alert_on_dead_links.py     turns a check_links report into GitHub issues (idempotent; circuit-breaker)
+scripts/alert_on_dead_links.py     turns a reachability report into GitHub issues (idempotent)
 .github/workflows/ci.yml           runs validate + a stale-index guard on every PR
-.github/workflows/link-check.yml   daily reachability probe -> auto-opens/closes dead-link issues
+.github/workflows/link-check.yml   daily reachability sweep + dead-link alerting
 ```
 
 ## Working rules / invariants
@@ -44,9 +49,9 @@ scripts/alert_on_dead_links.py     turns a check_links report into GitHub issues
 5. **Verify before you assert.** Do not invent `last_checked` dates or URL reachability.
    If you can reach the network, confirm `source.canonical_url` and set `last_checked` to
    today (`YYYY-MM-DD`). If you cannot verify, say so in the PR — do not fabricate.
-6. **Set `status` honestly:** `live` (reachable + maintained), `frozen` (reachable, no
-   longer updated), `moved` (URL changed), `dark` (gone/404), `mirrored` (we hold a copy).
-   If you mark something `dark`/`frozen`, add a `notes` line and a `archive.wayback_url`.
+6. **Set `status` honestly:** `live` (reachable + maintained), `frozen` (reachable, no longer
+   updated), `moved` (URL changed), `dark` (gone/404), `mirrored` (we hold a copy). If you mark
+   something `dark`/`frozen`, add a `notes` line and an `archive.wayback_url`.
 7. **Authoritative sources only.** Point to the publisher's canonical home, not a reposting.
 8. **One dataset = one file = one PR.** Keep changes small and reviewable.
 
@@ -59,7 +64,7 @@ python scripts/build_index.py    # regenerate catalog.json after entry changes
 python scripts/check_links.py    # verify which sources are still reachable (requires curl)
 ```
 
-To add a dataset: copy an existing `catalog/*.yaml`, fill every required field, validate,
+To add a dataset: copy `catalog/example-dataset.yaml`, fill every required field, validate,
 rebuild the index, open a PR. See `CONTRIBUTING.md` for the full checklist.
 
 ## Licensing
@@ -67,16 +72,6 @@ rebuild the index, open a PR. See `CONTRIBUTING.md` for the full checklist.
 Catalog data (`catalog/`, `catalog.json`) is **CC0**; tooling (`scripts/`, schema, CI) is
 **MIT**. Keep new tooling MIT-compatible and keep entries attribution-accurate — every entry
 must credit its publisher in the `attribution` field, even though the index itself is CC0.
-
-## Fleet development
-
-This repo is public and self-contained, but is *developed* inside the Willow fleet. If a
-local (gitignored) `.mcp.json` is present, you have fleet tooling: memory (`willow_remember`,
-`kb_search`), the Kart execution plane (`agent_task_submit` / `kart_task_run` — use it for
-shell work instead of raw Bash), and Grove. Inherited conventions: worktree + PR for every
-change (never commit to `main` directly), and `ruff check .` before pushing. Full detail and
-the public-vs-overlay split is in [`docs/DEVELOPMENT.md`](docs/DEVELOPMENT.md). None of the
-fleet overlay ships in the public repo.
 
 ## Tone
 

@@ -1,15 +1,15 @@
 name: "📊 Suggest a dataset"
-description: "Propose a public climate dataset for the catalog. No coding required — a curator will turn this into a catalog entry."
+description: "Propose a public dataset for the catalog. No coding required — a curator will turn this into a catalog entry."
 title: "[dataset] <dataset name>"
 labels: ["dataset-suggestion", "needs-curation"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for helping keep public climate data findable. You do **not** need to write YAML or open a pull request —
+        Thanks for helping keep public data findable. You do **not** need to write YAML or open a pull request —
         just fill in what you know and a curator will translate it into a catalog entry.
 
-        The Almanac is a **catalog, not a host**: we map where data lives, we don't store the data itself.
+        This is a **catalog, not a host**: we map where data lives, we don't store the data itself.
         Please point to the **publisher's authoritative home**, not a blog or reposting.
 
   - type: input
@@ -17,7 +17,7 @@ body:
     attributes:
       label: Dataset name
       description: Human-readable name of the dataset.
-      placeholder: "GISS Surface Temperature Analysis (GISTEMP v4)"
+      placeholder: "National Vital Statistics — Mortality"
     validations:
       required: true
 
@@ -26,7 +26,7 @@ body:
     attributes:
       label: Publisher
       description: The authoritative producer of the data.
-      placeholder: "NASA Goddard Institute for Space Studies (GISS)"
+      placeholder: "Example agency or institution"
     validations:
       required: true
 
@@ -35,7 +35,7 @@ body:
     attributes:
       label: Canonical URL
       description: The current authoritative home of the data (the publisher's page or download).
-      placeholder: "https://data.giss.nasa.gov/gistemp/"
+      placeholder: "https://..."
     validations:
       required: true
 
@@ -44,7 +44,6 @@ body:
     attributes:
       label: Description
       description: One or two sentences — what the dataset is and why it matters.
-      placeholder: "NASA's global land–ocean surface temperature anomaly product, widely cited in annual global temperature reporting."
     validations:
       required: true
 
@@ -53,7 +52,7 @@ body:
     attributes:
       label: Topics
       description: A few comma-separated tags for discovery.
-      placeholder: "temperature, anomalies, global, trends"
+      placeholder: "mortality, surveillance, weekly"
     validations:
       required: true
 
@@ -108,11 +107,11 @@ body:
       required: true
 
   - type: input
-    id: former_climate_gov_url
+    id: predecessor_url
     attributes:
-      label: Former climate.gov URL (optional)
-      description: If this data used to be surfaced on climate.gov and you know the old link.
-      placeholder: "https://www.climate.gov/news-features/..."
+      label: Former / predecessor URL (optional)
+      description: If this data used to live somewhere else (a decommissioned site or old link), paste it here.
+      placeholder: "https://..."
     validations:
       required: false
 

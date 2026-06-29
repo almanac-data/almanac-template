@@ -13,8 +13,8 @@ body:
     id: dataset_id
     attributes:
       label: Dataset id (or name)
-      description: The catalog entry slug if you know it (e.g. `nasa-gistemp`), otherwise the dataset name.
-      placeholder: "nasa-gistemp"
+      description: The catalog entry slug if you know it (e.g. `example-dataset`), otherwise the dataset name.
+      placeholder: "example-dataset"
     validations:
       required: true
 
@@ -23,7 +23,7 @@ body:
     attributes:
       label: The URL that failed
       description: The link you tried that didn't work.
-      placeholder: "https://data.giss.nasa.gov/gistemp/"
+      placeholder: "https://..."
     validations:
       required: true
 
