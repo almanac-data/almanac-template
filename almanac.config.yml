@@ -1,0 +1,21 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Almanac vertical identity. THIS IS THE FILE YOU EDIT after instantiating the
+# template. The schema, scripts, and CI all read from here — you should not need
+# to touch the engine to stand up a new <domain>-almanac.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Human-readable name, shown in the built catalog.json index.
+name: "Example Almanac"
+
+# Short machine slug (kebab-case). Used in the link-checker User-Agent string.
+slug: "example-almanac"
+
+# One-line description of this vertical, shown in catalog.json.
+description: "An open, versioned index of public example data."
+
+# This vertical's public home. Used as the contact URL in the link-checker
+# User-Agent so the agencies you probe can see who is checking their links.
+homepage: "https://github.com/almanac-data/example-almanac"
+
+# Free-text domain label (used in docs / discovery). e.g. climate, health, civic.
+domain: "example"
