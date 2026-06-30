@@ -19,3 +19,14 @@ homepage: "https://github.com/almanac-data/example-almanac"
 
 # Free-text domain label (used in docs / discovery). e.g. climate, health, civic.
 domain: "example"
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Reachability monitoring options (optional — sensible defaults if omitted).
+# ─────────────────────────────────────────────────────────────────────────────
+reachability:
+  # Many federal hosts (BLS, Census, Congress.gov, SEC, GAO) sit behind CDN bot
+  # protection that curl cannot pass, so they show as "blocked / unverifiable".
+  # Turn this on to verify them with a real headless Chromium in the daily
+  # link-check. Requires Playwright (requirements-headless.txt); CI installs the
+  # browser only when this is true. Leave false unless you catalog such sources.
+  headless: false
