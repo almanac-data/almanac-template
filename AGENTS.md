@@ -64,6 +64,19 @@ python scripts/build_index.py    # regenerate catalog.json after entry changes
 python scripts/check_links.py    # verify which sources are still reachable (requires curl)
 ```
 
+**CDN-bot-protected sources.** Some federal hosts (BLS, Census, Congress.gov, SEC, GAO)
+sit behind bot protection that curl can't pass, so they show as `blocked / unverifiable`
+rather than `ok`. To verify them, set `reachability.headless: true` in `almanac.config.yml`
+and install the optional headless dependency, then run with `--headless` (CI does this
+automatically when the config flag is on):
+
+```bash
+pip install -r requirements-headless.txt && playwright install --with-deps chromium
+python scripts/check_links.py --headless
+```
+
+The headless rung only ever *upgrades* a blocked source to `ok`; it never flags one as dead.
+
 To add a dataset: copy `catalog/example-dataset.yaml`, fill every required field, validate,
 rebuild the index, open a PR. See `CONTRIBUTING.md` for the full checklist.
 
