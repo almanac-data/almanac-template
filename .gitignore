@@ -17,4 +17,5 @@ venv/
 # machine. It references machine-specific absolute paths and must not ship in a
 # public repo. See docs/DEVELOPMENT.md.
 .mcp.json
+.cursor/
 .willow/
