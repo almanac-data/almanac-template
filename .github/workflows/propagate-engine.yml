@@ -1,0 +1,120 @@
+name: propagate-engine
+
+# Pushes engine files (schema, scripts, CI, deps) out to every vertical repo
+# whenever they change on main, opening one PR per vertical. Never auto-merges —
+# each vertical's own CI (also propagated) is the gate a human reviews before merge.
+#
+# Requires an org secret ENGINE_PROPAGATION_TOKEN: a PAT (fine-grained,
+# contents: write + pull-requests: write) scoped to the vertical repos below.
+# GITHUB_TOKEN cannot be used because it has no cross-repo write access.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - schema/catalog-entry.schema.json
+      - scripts/validate.py
+      - scripts/build_index.py
+      - scripts/check_links.py
+      - scripts/alert_on_dead_links.py
+      - requirements.txt
+      - requirements-headless.txt
+      - pyproject.toml
+      - tests/test_catalog.py
+      - .github/workflows/ci.yml
+      - .github/workflows/link-check.yml
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  propagate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        vertical:
+          - agriculture-almanac
+          - civic-almanac
+          - climate-almanac
+          - economy-almanac
+          - education-almanac
+          - energy-almanac
+          - environment-almanac
+          - health-almanac
+          - justice-almanac
+          - science-almanac
+          - transportation-almanac
+    steps:
+      - name: Checkout template
+        uses: actions/checkout@v4
+        with:
+          path: template
+
+      - name: Checkout vertical
+        uses: actions/checkout@v4
+        with:
+          repository: almanac-data/${{ matrix.vertical }}
+          token: ${{ secrets.ENGINE_PROPAGATION_TOKEN }}
+          path: vertical
+
+      - name: Copy engine files
+        id: copy
+        run: |
+          set -euo pipefail
+          paths=(
+            schema/catalog-entry.schema.json
+            scripts/validate.py
+            scripts/build_index.py
+            scripts/check_links.py
+            scripts/alert_on_dead_links.py
+            requirements.txt
+            requirements-headless.txt
+            pyproject.toml
+            tests/test_catalog.py
+            .github/workflows/ci.yml
+            .github/workflows/link-check.yml
+          )
+          changed=0
+          for rel in "${paths[@]}"; do
+            src="template/$rel"
+            dst="vertical/$rel"
+            if [[ ! -f "$src" ]]; then
+              echo "SKIP missing in template: $rel"
+              continue
+            fi
+            if [[ -f "$dst" ]] && cmp -s "$src" "$dst"; then
+              continue
+            fi
+            mkdir -p "$(dirname "$dst")"
+            cp "$src" "$dst"
+            echo "+ $rel"
+            changed=1
+          done
+          echo "changed=$changed" >> "$GITHUB_OUTPUT"
+
+      - name: Open PR
+        if: steps.copy.outputs.changed == '1'
+        env:
+          GH_TOKEN: ${{ secrets.ENGINE_PROPAGATION_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd vertical
+          branch="propagate-engine/${GITHUB_SHA::7}"
+          git checkout -B "$branch"
+          git config user.name "almanac-engine-bot"
+          git config user.email "engine-bot@users.noreply.github.com"
+          git add -A
+          git commit -m "chore(engine): propagate changes from almanac-template@${GITHUB_SHA::7}"
+          git push -f origin "$branch"
+          if gh pr view "$branch" --repo "almanac-data/${{ matrix.vertical }}" >/dev/null 2>&1; then
+            echo "PR already open for $branch"
+          else
+            gh pr create \
+              --repo "almanac-data/${{ matrix.vertical }}" \
+              --title "chore(engine): propagate changes from almanac-template" \
+              --body "Automated propagation of engine files (schema, scripts, CI, deps) from almanac-data/almanac-template@${GITHUB_SHA}. This PR does not auto-merge — check the CI run below before merging. A schema change may require migrating existing catalog entries." \
+              --head "$branch" \
+              --base main
+          fi
