@@ -1,0 +1,50 @@
+name: recovery-bot
+
+on:
+  schedule:
+    # Weekly, Monday 13:00 UTC — recovery discovery is exploratory, not a
+    # daily reachability sentinel like link-check.yml.
+    - cron: "0 13 * * 1"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Report candidates without opening PRs"
+        type: boolean
+        default: false
+
+# Needed to push a bot branch and open a PR proposing recovery[] candidates.
+# Never merges — see scripts/recovery_bot.py.
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  recovery-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Configure git identity for bot commits
+        run: |
+          git config user.name "recovery-bot"
+          git config user.email "recovery-bot@users.noreply.github.com"
+      - name: Discover recovery candidates
+        env:
+          JELES_REMOTE_SECRET: ${{ secrets.JELES_REMOTE_SECRET }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/recovery_bot.py \
+            ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--json' || '' }} \
+            | tee recovery-bot-report.json || true
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: recovery-bot-report
+          path: recovery-bot-report.json
