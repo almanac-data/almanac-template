@@ -8,6 +8,7 @@
   "entries": [
     {
       "id": "example-dataset",
+      "type": "dataset",
       "title": "Example Dataset (replace this with a real entry)",
       "description": "A placeholder catalog entry so the index builds and CI passes on a fresh template. Delete this file once you have added your first real dataset.\n",
       "publisher": "Example Agency",
@@ -16,8 +17,9 @@
       ],
       "source": {
         "canonical_url": "https://example.org",
-        "predecessor_url": null,
-        "doi": null
+        "identifiers": {
+          "doi": null
+        }
       },
       "access": {
         "method": [
@@ -37,14 +39,18 @@
       },
       "license": "CC0-1.0",
       "attribution": "Example Agency",
-      "archive": {
-        "wayback_url": null,
-        "cloud_mirror": null,
-        "mirror": null
+      "observed": {
+        "checked": "2026-07-01",
+        "reachable": true,
+        "http_status": 200,
+        "final_url": null,
+        "redirect_chain": [],
+        "fingerprint_result": "no-baseline"
       },
       "status": "live",
-      "last_checked": "2026-06-29",
-      "checksum": null,
+      "status_since": "2026-07-01",
+      "status_source": "curator",
+      "recovery": [],
       "notes": "This is a template stub. See SETUP.md for how to stand up your own almanac vertical, then replace this entry with real datasets.\n"
     }
   ]

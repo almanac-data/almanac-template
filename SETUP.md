@@ -37,7 +37,7 @@ In **`.github/ISSUE_TEMPLATE/config.yml`**, replace `YOUR-ALMANAC` with your rep
 
 1. Copy `catalog/example-dataset.yaml` to `catalog/<your-id>.yaml`.
 2. Fill in every required field (the filename minus `.yaml` must equal the `id`).
-3. Verify the canonical URL yourself; set `last_checked` to today (`YYYY-MM-DD`).
+3. Verify the canonical URL yourself; set `observed.checked` to today (`YYYY-MM-DD`).
 4. Delete `catalog/example-dataset.yaml`.
 5. Regenerate and validate:
    ```bash
