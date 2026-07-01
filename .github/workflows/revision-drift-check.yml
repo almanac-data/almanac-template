@@ -1,0 +1,47 @@
+name: revision-drift-check
+
+on:
+  schedule:
+    # Weekly, Monday 14:00 UTC — only entries with a captured fingerprint
+    # baseline are probed at all, so this stays cheap and infrequent.
+    - cron: "0 14 * * 1"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Plan proposals without opening/closing issues"
+        type: boolean
+        default: false
+
+# Needed so the alert step can open, update, and close issues.
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check-revision-drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Probe fingerprinted entries for drift
+        # check_revision_drift.py exits non-zero when a reclassification is
+        # proposed; tee keeps the step green so the alert step always runs.
+        run: python scripts/check_revision_drift.py --json | tee revision-drift-report.json
+      - name: Open or refresh revision-proposed issues
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/alert_on_revision_drift.py \
+            --report revision-drift-report.json \
+            ${{ (github.event_name == 'workflow_dispatch' && inputs.dry_run) && '--dry-run' || '' }}
+      - name: Upload report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: revision-drift-report
+          path: revision-drift-report.json
