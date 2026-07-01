@@ -17,6 +17,7 @@ on:
       - scripts/build_index.py
       - scripts/check_links.py
       - scripts/alert_on_dead_links.py
+      - scripts/migrate_v1_v2.py
       - requirements.txt
       - requirements-headless.txt
       - pyproject.toml
@@ -69,6 +70,7 @@ jobs:
             scripts/build_index.py
             scripts/check_links.py
             scripts/alert_on_dead_links.py
+            scripts/migrate_v1_v2.py
             requirements.txt
             requirements-headless.txt
             pyproject.toml
