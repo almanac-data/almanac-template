@@ -19,9 +19,9 @@ read from it. **Do not hardcode domain-specific names into the engine** — put 
 
 **Catalog, don't host.** This repo maps data; it does not store data bytes. Do not add datasets,
 CSVs, NetCDF, GeoTIFFs, or any data payload to the repo. The *only* exception is a deliberate,
-small, at-risk artifact mirrored under an entry's `archive.mirror` field — and only after it's
-been discussed in an issue. If a task tempts you to commit data, stop: the answer is almost
-always a catalog entry pointing to where the data lives.
+small, at-risk artifact recorded as a `recovery[]` candidate — and only after it's been discussed
+in an issue. If a task tempts you to commit data, stop: the answer is almost always a catalog
+entry pointing to where the data lives.
 
 ## Repository map
 
@@ -46,12 +46,12 @@ scripts/alert_on_dead_links.py     turns a reachability report into GitHub issue
 3. **Rebuild the index after touching entries.** Run `python scripts/build_index.py` and
    commit the updated `catalog.json` in the same change. CI fails if it's stale.
 4. **Never hand-edit `catalog.json`.** It is generated. Edit the YAML, regenerate.
-5. **Verify before you assert.** Do not invent `last_checked` dates or URL reachability.
-   If you can reach the network, confirm `source.canonical_url` and set `last_checked` to
+5. **Verify before you assert.** Do not invent `observed.checked` dates or URL reachability.
+   If you can reach the network, confirm `source.canonical_url` and set `observed.checked` to
    today (`YYYY-MM-DD`). If you cannot verify, say so in the PR — do not fabricate.
-6. **Set `status` honestly:** `live` (reachable + maintained), `frozen` (reachable, no longer
-   updated), `moved` (URL changed), `dark` (gone/404), `mirrored` (we hold a copy). If you mark
-   something `dark`/`frozen`, add a `notes` line and an `archive.wayback_url`.
+6. **Set `status` honestly:** `live`, `revised`, `moved`, `redirected`, `superseded`, `dark`,
+   `frozen` — see `CONTRIBUTING.md` for the full table. If you mark something `dark`/
+   `superseded`, add a `notes` line and, if you have one, a `recovery[]` candidate.
 7. **Authoritative sources only.** Point to the publisher's canonical home, not a reposting.
 8. **One dataset = one file = one PR.** Keep changes small and reviewable.
 
