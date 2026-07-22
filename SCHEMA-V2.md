@@ -264,11 +264,15 @@ The smallness discipline that kept v1 healthy:
 
 ## Open items before code
 
-1. Generate `schema/catalog-entry.schema.json` v2 from this rationale.
-2. Update `scripts/check_links.py` to populate `observed` (capture `final_url`, redirect chain) and
-   to compute `fingerprint_result` against any baseline.
-3. Teach `scripts/validate.py` the type-conditional soft-warn for `coverage` vs `bibliographic`.
-4. Write `scripts/migrate_v1_v2.py`.
-5. Decide whether the daily job auto-promotes `live` → `revised`/`superseded`/`dark`, or only
+*(Status check 2026-07-22: items 1–4 are shipped — the v2 schema, `check_links.py`
+observed/fingerprint capture, `validate.py` type-conditional warns, and
+`migrate_v1_v2.py` all exist in-tree. Only item 5 remains genuinely open.)*
+
+1. ~~Generate `schema/catalog-entry.schema.json` v2 from this rationale.~~ **Done.**
+2. ~~Update `scripts/check_links.py` to populate `observed` (capture `final_url`, redirect chain) and
+   to compute `fingerprint_result` against any baseline.~~ **Done.**
+3. ~~Teach `scripts/validate.py` the type-conditional soft-warn for `coverage` vs `bibliographic`.~~ **Done.**
+4. ~~Write `scripts/migrate_v1_v2.py`.~~ **Done.**
+5. **Still open:** decide whether the daily job auto-promotes `live` → `revised`/`superseded`/`dark`, or only
    *proposes* a status change via issue for curator confirmation (leaning: propose, never auto-write
    a lifecycle label — `status_source` stays `curator` for anything but the cleanest cases).
