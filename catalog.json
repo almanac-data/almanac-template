@@ -41,8 +41,8 @@
       "attribution": "Example Agency",
       "observed": {
         "checked": "2026-07-01",
-        "reachable": true,
-        "http_status": 200,
+        "reachable": null,
+        "http_status": null,
         "final_url": null,
         "redirect_chain": [],
         "fingerprint_result": "no-baseline"

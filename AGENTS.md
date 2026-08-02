@@ -51,6 +51,10 @@ scripts/recovery_bot.py            proposes recovery[] candidates for dark/super
 5. **Verify before you assert.** Do not invent `observed.checked` dates or URL reachability.
    If you can reach the network, confirm `source.canonical_url` and set `observed.checked` to
    today (`YYYY-MM-DD`). If you cannot verify, say so in the PR — do not fabricate.
+   **`observed` is machine-written.** Set `checked` and leave `reachable`, `http_status`, and
+   `final_url` null — only `scripts/check_links.py` writes those, from a real probe. Recording
+   your own `curl` output there disguises a human check as a machine one. Report what you
+   observed in the PR body; `status` + `status_source: curator` is where a human call belongs.
 6. **Set `status` honestly:** `live`, `revised`, `moved`, `redirected`, `superseded`, `dark`,
    `frozen` — see `CONTRIBUTING.md` for the full table. If you mark something `dark`/
    `superseded`, add a `notes` line and, if you have one, a `recovery[]` candidate.
