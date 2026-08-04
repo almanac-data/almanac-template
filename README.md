@@ -28,7 +28,7 @@ catalog/*.yaml                     one curated dataset per file (your data)
 catalog.json                       generated, machine-readable full index
 scripts/validate.py                schema + integrity checks (CI gate)
 scripts/build_index.py             catalog/*.yaml -> catalog.json
-scripts/check_links.py             reachability checker (read-only)
+scripts/check_links.py             reachability checker (read-only unless --write-observed)
 scripts/alert_on_dead_links.py     turns the reachability report into GitHub issues
 .github/workflows/ci.yml           validates entries + stale-index guard on every PR
 .github/workflows/link-check.yml   daily reachability sweep + auto dead-link alerts

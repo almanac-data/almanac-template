@@ -32,7 +32,7 @@ catalog/<id>.yaml                  one curated dataset per file (source of truth
 catalog.json                       GENERATED build artifact — do not hand-edit
 scripts/validate.py                schema + filename==id + uniqueness checks (CI gate)
 scripts/build_index.py             catalog/*.yaml -> catalog.json
-scripts/check_links.py             reachability checker (read-only; reports, never rewrites)
+scripts/check_links.py             reachability checker (reports; writes `observed` only with --write-observed)
 scripts/alert_on_dead_links.py     turns a reachability report into GitHub issues (idempotent)
 scripts/recovery_bot.py            proposes recovery[] candidates for dark/superseded entries via jeles-remote (never auto-writes; PR only)
 .github/workflows/ci.yml           runs validate + a stale-index guard on every PR
@@ -52,9 +52,10 @@ scripts/recovery_bot.py            proposes recovery[] candidates for dark/super
    If you can reach the network, confirm `source.canonical_url` and set `observed.checked` to
    today (`YYYY-MM-DD`). If you cannot verify, say so in the PR — do not fabricate.
    **`observed` is machine-written.** Set `checked` and leave `reachable`, `http_status`, and
-   `final_url` null — only `scripts/check_links.py` writes those, from a real probe. Recording
-   your own `curl` output there disguises a human check as a machine one. Report what you
-   observed in the PR body; `status` + `status_source: curator` is where a human call belongs.
+   `final_url` null — only `scripts/check_links.py --write-observed` fills those, from a real
+   probe. Recording your own `curl` output there disguises a human check as a machine one.
+   Report what you observed in the PR body; `status` + `status_source: curator` is where a
+   human call belongs.
 6. **Set `status` honestly:** `live`, `revised`, `moved`, `redirected`, `superseded`, `dark`,
    `frozen` — see `CONTRIBUTING.md` for the full table. If you mark something `dark`/
    `superseded`, add a `notes` line and, if you have one, a `recovery[]` candidate.
@@ -69,6 +70,18 @@ python scripts/validate.py       # before any commit that touches catalog/
 python scripts/build_index.py    # regenerate catalog.json after entry changes
 python scripts/check_links.py    # verify which sources are still reachable (requires curl)
 ```
+
+**Recording what the probe saw.** `check_links.py` reports and exits; it changes nothing
+unless asked. `--write-observed` writes each probe's facts — `checked`, `reachable`,
+`http_status`, `final_url`, `redirect_chain`, and `fingerprint_result` where a baseline
+exists — into the matching entry's `observed` block, and nothing else. `status` is never
+touched: the machine records what it saw, a curator decides what it means.
+
+```bash
+python scripts/check_links.py --write-observed && python scripts/build_index.py
+```
+
+Rebuild the index in the same change, since `observed` is carried into `catalog.json`.
 
 **CDN-bot-protected sources.** Some federal hosts (BLS, Census, Congress.gov, SEC, GAO)
 sit behind bot protection that curl can't pass, so they show as `blocked / unverifiable`

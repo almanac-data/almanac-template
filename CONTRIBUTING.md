@@ -13,10 +13,11 @@ reviewable: **one dataset = one file = one pull request.**
    attribution`.
 4. Verify the source URL yourself and set `observed.checked` to today's date (`YYYY-MM-DD`).
    **Leave the rest of `observed` null.** `reachable`, `http_status`, and `final_url` are machine
-   facts — only `scripts/check_links.py` writes them, from an actual probe. Transcribing your own
-   `curl` output into those fields makes a human check look like a machine one, which is exactly
-   the distinction the block exists to preserve. Put your verification in the PR description
-   instead; the next reachability sweep will fill the fields in.
+   facts — only `scripts/check_links.py --write-observed` fills them, from an actual probe.
+   Transcribing your own `curl` output into those fields makes a human check look like a
+   machine one, which is exactly the distinction the block exists to preserve. Put your
+   verification in the PR description instead; the next reachability sweep will fill the
+   fields in.
 5. Run the checks locally:
    ```bash
    pip install -r requirements.txt
