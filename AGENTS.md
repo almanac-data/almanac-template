@@ -88,6 +88,13 @@ python scripts/check_links.py --write-observed && python scripts/build_index.py
 
 Rebuild the index in the same change, since `observed` is carried into `catalog.json`.
 
+The daily `link-check` workflow does this for you and proposes the result as a
+`monitor/observed-refresh` PR. **That PR only opens automatically if the repo allows it** —
+*Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests"*,
+which is off by default and which a workflow's `permissions:` block cannot grant. With it
+off the job still probes, still writes, and still pushes the branch; it just logs a warning
+with a compare link for a human to open the PR from. The data is never lost either way.
+
 **CDN-bot-protected sources.** Some federal hosts (BLS, Census, Congress.gov, SEC, GAO)
 sit behind bot protection that curl can't pass, so they show as `blocked / unverifiable`
 rather than `ok`. To verify them, set `reachability.headless: true` in `almanac.config.yml`
