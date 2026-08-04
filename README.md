@@ -35,6 +35,9 @@ scripts/alert_on_dead_links.py     turns the reachability report into GitHub iss
 .github/ISSUE_TEMPLATE/            no-code "suggest a dataset" / "report a dead link" forms
 ```
 
+Template-only tooling — the recovery bot and the rot/drift checkers, which do **not**
+propagate to verticals — is documented in [`docs/ENGINE-TOOLING.md`](docs/ENGINE-TOOLING.md).
+
 ## The one rule
 
 **Catalog, don't host.** This repo maps data; it does not store data bytes. See

@@ -34,11 +34,16 @@ scripts/validate.py                schema + filename==id + uniqueness checks (CI
 scripts/build_index.py             catalog/*.yaml -> catalog.json
 scripts/check_links.py             reachability checker (reports; writes `observed` only with --write-observed)
 scripts/alert_on_dead_links.py     turns a reachability report into GitHub issues (idempotent)
-scripts/recovery_bot.py            proposes recovery[] candidates for dark/superseded entries via jeles-remote (never auto-writes; PR only)
 .github/workflows/ci.yml           runs validate + a stale-index guard on every PR
-.github/workflows/link-check.yml   daily reachability sweep + dead-link alerting
-.github/workflows/recovery-bot.yml weekly recovery-candidate discovery (needs JELES_REMOTE_SECRET repo secret)
+.github/workflows/link-check.yml   daily reachability sweep + dead-link alerting; opens an
+                                   `observed`-refresh PR when the probe sees something new
 ```
+
+This file is propagated verbatim to every vertical, so it describes **only what every
+vertical has**. Tooling that lives in `almanac-template` alone — the recovery bot and the
+rot/drift checkers — is documented in [`docs/ENGINE-TOOLING.md`](docs/ENGINE-TOOLING.md),
+which does not propagate. Adding a template-only path to the map above would hand eleven
+verticals a guide pointing at files they do not have.
 
 ## Working rules / invariants
 
