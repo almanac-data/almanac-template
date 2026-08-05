@@ -19,3 +19,13 @@ venv/
 .mcp.json
 .cursor/
 .willow/
+
+# Sibling-repo checkouts / symlinks at the repo root — local only.
+# Working on the fleet often means putting every vertical next to (or symlinked
+# into) this checkout so one agent session can see them all. That convenience is
+# fine; committing it is not. The paths are machine-specific and absolute, so a
+# committed symlink dangles for everyone else — and this repo is the template
+# every vertical is cloned from, so the mistake propagates by example.
+# Anchored to the root: catalog entries live in catalog/*.yaml and are unaffected.
+/*-almanac
+/almanac-template
