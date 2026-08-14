@@ -25,7 +25,7 @@ attribution: "Example Agency"
 # observed = machine facts only. A curator sets `checked` and leaves the rest
 # null; scripts/check_links.py fills them in from an actual probe.
 observed:
-  checked: '2026-08-09'
+  checked: '2026-08-14'
   reachable: true
   http_status: 200
   final_url: https://example.org/
