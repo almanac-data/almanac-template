@@ -40,7 +40,7 @@
       "license": "CC0-1.0",
       "attribution": "Example Agency",
       "observed": {
-        "checked": "2026-08-15",
+        "checked": "2026-08-22",
         "reachable": true,
         "http_status": 200,
         "final_url": "https://example.org/",
