@@ -26,7 +26,7 @@ Stewards: see [docs/STEWARDING.md](docs/STEWARDING.md).
 ## License
 
 - **Catalog data** (`catalog/`, `catalog.json`) — [CC0 1.0](LICENSE-DATA).
-- **Tooling** (`scripts/`, schema, CI) — [MIT](LICENSE-CODE).
+- **Tooling** (`scripts/`, schema, CI) — [Apache-2.0](LICENSE-CODE).
 
 ---
 
