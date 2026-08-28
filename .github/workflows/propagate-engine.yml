@@ -120,3 +120,58 @@ jobs:
               --head "$branch" \
               --base main
           fi
+
+  # A propagation that fails silently is worse than no propagation: the engine
+  # keeps moving in the template while eleven verticals quietly stop receiving
+  # it, and nothing surfaces until someone diffs by hand. That happened — the
+  # ENGINE_PROPAGATION_TOKEN expired and every job died on "Bad credentials"
+  # for weeks with no signal.
+  #
+  # Deliberately on GITHUB_TOKEN, not the propagation PAT: the most likely
+  # thing to break IS that PAT, so an alert authenticated with it would be
+  # silent in exactly the case it exists to report.
+  alert-on-failure:
+    needs: [propagate]
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Open or refresh the propagation-failure issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          title="propagate-engine is failing — verticals are not receiving engine changes"
+          body=$(printf '%s\n' \
+            "Propagation from \`almanac-template\` failed on commit \`${GITHUB_SHA}\`." \
+            "" \
+            "**The eleven vertical repos are no longer receiving engine updates.** Any" \
+            "schema, script, CI, or test change merged here since this started has not" \
+            "reached them, and nothing else will surface that." \
+            "" \
+            "Failed run: ${RUN_URL}" \
+            "" \
+            "Most common cause: \`ENGINE_PROPAGATION_TOKEN\` has expired (the jobs fail" \
+            "with \`Bad credentials\` at the vertical checkout). It is a PAT and PATs" \
+            "expire; re-issue it with contents:write + pull-requests:write scoped to the" \
+            "vertical repos, or move the propagation onto a GitHub App so there is" \
+            "nothing left to expire." \
+            "" \
+            "This issue is reopened and updated by every failing run. It stays open" \
+            "until a propagation succeeds — closing it without fixing the cause just" \
+            "restores the silence.")
+          existing=$(gh issue list --repo "$REPO" --state all --label propagation-failure \
+                      --json number,state --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue reopen "$existing" --repo "$REPO" 2>/dev/null || true
+            gh issue comment "$existing" --repo "$REPO" --body "$body"
+            echo "refreshed issue #$existing"
+          else
+            gh label create propagation-failure --repo "$REPO" \
+              --color B60205 --description "propagate-engine could not reach the verticals" 2>/dev/null || true
+            gh issue create --repo "$REPO" --title "$title" --body "$body" --label propagation-failure
+          fi
