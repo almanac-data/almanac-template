@@ -62,6 +62,11 @@ jobs:
 
       - name: Copy engine files
         id: copy
+        env:
+          # Through env, never interpolated into the shell body — the matrix
+          # values are a controlled literal list, but the fleet's convention is
+          # that nothing reaches a `run:` block through ${{ }}.
+          VERTICAL: ${{ matrix.vertical }}
         run: |
           set -euo pipefail
           paths=(
@@ -78,10 +83,34 @@ jobs:
             .github/workflows/ci.yml
             .github/workflows/link-check.yml
           )
+
+          # Engine paths a specific vertical owns locally, as "vertical:path".
+          # MUST mirror LOCAL_OVERRIDES in the org meta-repo's
+          # scripts/propagate-engine.sh (almanac-data/almanac-data).
+          #
+          # That script has always honoured these; this workflow did not. The
+          # divergence was harmless only by accident: the manual script's copy
+          # list carries CONTRIBUTING.md, SCHEMA-V2.md and AGENTS.md and this
+          # one does not, so no overridden file was ever in reach. Adding a
+          # prose file to `paths` above would have silently overwritten a
+          # steward's work — the exact failure the script's own comment says
+          # this list exists to prevent.
+          #
+          # Two lists, one policy, and only one of them knew about the
+          # exception. If you add a path above, check it against this.
+          local_overrides=(
+            "climate-almanac:CONTRIBUTING.md"
+            "climate-almanac:AGENTS.md"
+          )
+
           changed=0
           for rel in "${paths[@]}"; do
             src="template/$rel"
             dst="vertical/$rel"
+            if printf '%s\n' "${local_overrides[@]}" | grep -qxF "${VERTICAL}:${rel}"; then
+              echo "LOCAL OVERRIDE, not propagated: ${VERTICAL}:${rel}"
+              continue
+            fi
             if [[ ! -f "$src" ]]; then
               echo "SKIP missing in template: $rel"
               continue
