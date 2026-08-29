@@ -4,8 +4,15 @@ name: propagate-engine
 # whenever they change on main, opening one PR per vertical. Never auto-merges —
 # each vertical's own CI (also propagated) is the gate a human reviews before merge.
 #
-# Requires an org secret ENGINE_PROPAGATION_TOKEN: a PAT (fine-grained,
-# contents: write + pull-requests: write) scoped to the vertical repos below.
+# Requires the willow-ci GitHub App (id 4749508) installed on almanac-data, plus
+# the org variable WILLOW_CI_APP_ID and the org secret WILLOW_CI_PRIVATE_KEY.
+#
+# It needs THREE permissions, not two: contents: write + pull-requests: write +
+# WORKFLOWS: WRITE. The engine payload below includes .github/workflows/ci.yml
+# and link-check.yml, and GitHub gates workflow files separately — a credential
+# without workflows:write checks out, copies and commits successfully, then
+# fails at push with "refusing to allow ... to create or update workflow ...
+# without `workflow` scope". Measured 2026-08-29, the hard way.
 # GITHUB_TOKEN cannot be used because it has no cross-repo write access.
 
 on:
@@ -53,11 +60,24 @@ jobs:
         with:
           path: template
 
+      # Scoped to the VERTICAL, not this repo. create-github-app-token defaults
+      # to "the current repository" — here that would be almanac-template, and
+      # the push to the vertical would fail with a permissions error that looks
+      # nothing like the cause.
+      - name: Mint a willow-ci token for this vertical
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ vars.WILLOW_CI_APP_ID }}
+          private-key: ${{ secrets.WILLOW_CI_PRIVATE_KEY }}
+          owner: almanac-data
+          repositories: ${{ matrix.vertical }}
+
       - name: Checkout vertical
         uses: actions/checkout@v4
         with:
           repository: almanac-data/${{ matrix.vertical }}
-          token: ${{ secrets.ENGINE_PROPAGATION_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           path: vertical
 
       - name: Copy engine files
@@ -128,7 +148,7 @@ jobs:
       - name: Open PR
         if: steps.copy.outputs.changed == '1'
         env:
-          GH_TOKEN: ${{ secrets.ENGINE_PROPAGATION_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -euo pipefail
           cd vertical
@@ -184,11 +204,12 @@ jobs:
             "" \
             "Failed run: ${RUN_URL}" \
             "" \
-            "Most common cause: \`ENGINE_PROPAGATION_TOKEN\` has expired (the jobs fail" \
-            "with \`Bad credentials\` at the vertical checkout). It is a PAT and PATs" \
-            "expire; re-issue it with contents:write + pull-requests:write scoped to the" \
-            "vertical repos, or move the propagation onto a GitHub App so there is" \
-            "nothing left to expire." \
+            "This now runs on the willow-ci App (id 4749508), whose tokens are minted" \
+            "per run and expire in an hour, so an expired credential is no longer the" \
+            "likely cause. Check instead: is the App still installed on almanac-data" \
+            "and on this vertical, and does it still hold contents:write," \
+            "pull-requests:write AND workflows:write? The engine payload includes" \
+            "workflow files, which GitHub gates separately." \
             "" \
             "This issue is reopened and updated by every failing run. It stays open" \
             "until a propagation succeeds — closing it without fixing the cause just" \
