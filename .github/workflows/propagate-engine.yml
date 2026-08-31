@@ -154,8 +154,17 @@ jobs:
           cd vertical
           branch="propagate-engine/${GITHUB_SHA::7}"
           git checkout -B "$branch"
-          git config user.name "almanac-engine-bot"
-          git config user.email "engine-bot@users.noreply.github.com"
+          # Author as the App, so GitHub types the actor as a Bot.
+          # "almanac-engine-bot" was a string matching no account on GitHub, so
+          # a check written against that login would silently never fire — the
+          # failure BOT-INVENTORY's match-bot-by-type-not-login constraint
+          # names. The numeric id is looked up rather than pinned, because a
+          # noreply address only resolves to the bot user when it carries that
+          # user's own id.
+          slug="${{ steps.app-token.outputs.app-slug }}"
+          bot_id="$(gh api "/users/${slug}[bot]" --jq .id)"
+          git config user.name "${slug}[bot]"
+          git config user.email "${bot_id}+${slug}[bot]@users.noreply.github.com"
           git add -A
           git commit -m "chore(engine): propagate changes from almanac-template@${GITHUB_SHA::7}"
           git push -f origin "$branch"
