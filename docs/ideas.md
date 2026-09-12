@@ -73,7 +73,7 @@ the promotion checklist in `docs/ENGINE-TOOLING.md`, the two-lists comment in
 The fleet convention this file exists for, and the hub's open issues that are documentation or
 governance rather than engine.
 
-20. Adopt `Idea-Id` commit trailers (fleet CONVENTION, decision-2026-09-11).
+20. ✅ **shipped**: adopt `Idea-Id` commit trailers (fleet CONVENTION, decision-2026-09-11). `.github/workflows/trailers.yml` runs `reconciler verify` on every PR, `CONTRIBUTING.md` names the convention and the commands, and every hub commit from this one on carries a generated trailer.
 21. ci: lint Markdown so a doc PR cannot break the README with an unbalanced code fence (#7).
 22. governance: a `CODEOWNERS.example` plus a steward rollout checklist (#5); today `docs/STEWARDING.md` carries the onboarding steps in prose and `.github/CODEOWNERS` ships the catch-all.
 23. docs: a dead-link triage playbook for stewards (#4).

@@ -62,3 +62,25 @@ if possible a `recovery[]` candidate (see below).
 
 Open an issue (or a PR flipping the entry's `status`) if you find a source has gone dark or moved.
 Reachability reports from `scripts/check_links.py` are welcome.
+
+## The Idea-Id commit-trailer convention
+
+This section is about `almanac-template`, the hub. Its open items live in `docs/ideas.md`,
+which does not propagate; a vertical carries no pile and no trailer gate.
+
+A commit that lands an idea recorded in `docs/ideas.md` carries an
+`Idea-Id: <corpus>-ideas-<num>` git trailer (add `Idea-Status: partial` when a
+commit only partly lands it). It is the durable join key willow-reconciler
+reads; a wrong id is worse than no id, so never type one by hand:
+
+    pip install "willow-reconciler>=0.6.0"
+    reconciler id --repo ./ --doc docs/ideas.md --grep "words from the item"
+    reconciler install-hook --repo ./       # derives it from a branch named idea-NN
+
+(`./`, not `.`: reconciler 0.6.0 reads a bare dot as a repo name to look up beside the
+checkout, and only a string carrying a `/` as a path.)
+
+`.github/workflows/trailers.yml` runs `reconciler verify` on every PR and fails
+on a trailer that names an item the doc does not contain. To run the same check locally:
+
+    reconciler verify --repo ./ --doc docs/ideas.md
