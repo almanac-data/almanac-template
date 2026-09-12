@@ -1,0 +1,33 @@
+name: Trailers
+
+# Template-only: NOT in propagate-engine.yml's allowlist, and
+# tests/test_propagation_floor.py fails if it ever is. The verticals carry no
+# docs/ideas.md, so this gate there would fail every PR.
+#
+# `--repo ./`, not `.`: reconciler 0.6.0 reads a bare dot as a repo NAME to
+# resolve beside the checkout and only a string carrying a `/` as a path.
+# fetch-depth 0 because verify reads every Idea-Id trailer in history.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify-trailers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install the reconciler
+        run: pip install "willow-reconciler>=0.6.0"
+      - name: Verify Idea-Id trailers resolve
+        run: reconciler verify --repo ./ --doc docs/ideas.md

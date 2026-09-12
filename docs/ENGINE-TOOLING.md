@@ -20,6 +20,9 @@ moved on without it.
 | `.github/workflows/recovery-bot.yml` | Weekly recovery-candidate discovery. Requires a `JELES_REMOTE_SECRET` repo secret. |
 | `tests/test_recovery_rot.py` | Covers the rot checker. |
 | `tests/test_revision_drift.py` | Covers the drift proposer. |
+| `.github/workflows/trailers.yml` | Runs `reconciler verify` on every PR: every `Idea-Id` trailer in history must resolve to an item in `docs/ideas.md`. |
+| `tests/test_propagation_floor.py` | Asserts the Dependabot pack is present and propagated, and that template-only files are not. |
+| `docs/ideas.md` | The hub's idea pile, read by `reconciler run --repo ./ --doc docs/ideas.md`. Verticals carry no pile. |
 
 ## Why these stay here
 
