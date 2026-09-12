@@ -37,6 +37,7 @@ scripts/alert_on_dead_links.py     turns a reachability report into GitHub issue
 .github/workflows/ci.yml           runs validate + a stale-index guard on every PR
 .github/workflows/link-check.yml   daily reachability sweep + dead-link alerting; opens an
                                    `observed`-refresh PR when the probe sees something new
+.github/dependabot.yml             weekly pip (minor+patch grouped) and github-actions update PRs
 ```
 
 This file is propagated verbatim to every vertical, so it describes **only what every

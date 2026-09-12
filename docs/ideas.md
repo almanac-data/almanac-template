@@ -66,7 +66,7 @@ the promotion checklist in `docs/ENGINE-TOOLING.md`, the two-lists comment in
 16. Promote the rot and drift checkers once a vertical carries `recovery[]` candidates or `fingerprint.lead_hash` baselines, with their tests in the same change and their rows moved from `docs/ENGINE-TOOLING.md` into `AGENTS.md`'s map — the step that gets forgotten (`docs/ENGINE-TOOLING.md`).
 17. One path list shared by `propagate-engine.yml` and `propagate-engine.sh`; `SETUP.md` added to it; climate's overrides honoured by name; `status-all.sh` covers all eleven; stray `catalog-entry.v2.schema.json` removed by propagation; CODEOWNERS placeholder substituted at propagation time (Wave 5, A5-paths-align).
 18. `engine_version` in `almanac.config.yml` written by propagation; `pyproject.toml` leaves the propagated set; a propagated `tests/test_engine_version.py` fails when a vertical's declared version trails the template's (Wave 5, A5-engine-version).
-19. The fleet Dependabot pack applied to the hub and propagated (Wave 4, C4-almanac-dependabot).
+19. 🟡 **partial**: the fleet Dependabot pack applied to the hub and propagated (Wave 4, C4-almanac-dependabot). The pack and its allowlist entry landed in the hub; the eleven propagation PRs open on merge and the operator merges them. `propagate-engine.sh`'s list in the org meta-repo still needs the same one-line addition.
 
 ## D. Conventions, governance and docs
 
