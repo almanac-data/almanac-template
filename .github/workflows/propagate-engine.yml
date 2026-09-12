@@ -57,7 +57,7 @@ jobs:
           - transportation-almanac
     steps:
       - name: Checkout template
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           path: template
 
@@ -75,7 +75,7 @@ jobs:
           repositories: ${{ matrix.vertical }}
 
       - name: Checkout vertical
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           repository: almanac-data/${{ matrix.vertical }}
           token: ${{ steps.app-token.outputs.token }}
