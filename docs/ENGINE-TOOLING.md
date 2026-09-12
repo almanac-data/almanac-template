@@ -20,6 +20,7 @@ moved on without it.
 | `.github/workflows/recovery-bot.yml` | Weekly recovery-candidate discovery. Requires a `JELES_REMOTE_SECRET` repo secret. |
 | `tests/test_recovery_rot.py` | Covers the rot checker. |
 | `tests/test_revision_drift.py` | Covers the drift proposer. |
+| `docs/ideas.md` | The hub's idea pile, read by `reconciler run --repo ./ --doc docs/ideas.md`. Verticals carry no pile. |
 
 ## Why these stay here
 
