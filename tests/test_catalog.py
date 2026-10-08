@@ -19,6 +19,13 @@ def test_validate_passes():
     assert r.returncode == 0
 
 
+def test_documentation_starter_is_not_a_catalog_entry():
+    starter = ROOT / "docs" / "catalog-entry.example.yaml"
+    assert starter.is_file()
+    assert not (ROOT / "catalog" / "example-dataset.yaml").exists()
+    assert starter not in sorted((ROOT / "catalog").glob("*.yaml"))
+
+
 def test_build_index_sorted_and_unique():
     subprocess.run([sys.executable, "scripts/build_index.py"], cwd=ROOT, check=True)
     data = json.loads((ROOT / "catalog.json").read_text())

@@ -68,7 +68,7 @@
       "type": "object", "additionalProperties": false, "required": ["checked"],
       "description": "Pure machine facts from the last probe. No interpretation — the machine records facts here and never assigns a lifecycle label.",
       "properties": {
-        "checked": { "type": ["string","null"], "format": "date", "description": "ISO date the resource was last probed (replaces v1 last_checked). Null until the first machine probe." },
+        "checked": { "type": "string", "format": "date", "description": "ISO date the resource was last probed (replaces v1 last_checked)." },
         "reachable": { "type": ["boolean","null"], "description": "Did the probe get any response?" },
         "http_status": { "type": ["integer","null"], "description": "HTTP status of the final response." },
         "final_url": { "type": ["string","null"], "format": "uri", "description": "Where the probe actually landed. Differs from source.canonical_url on redirect — the highest-signal monitoring fact." },

@@ -1,0 +1,40 @@
+# Copy this file to catalog/<your-id>.yaml, then replace every example value.
+# This file is documentation only: validators, the index builder, and the
+# reachability checker process catalog/*.yaml, not docs/*.yaml.
+id: example-dataset
+type: dataset
+title: Replace with the real dataset title
+description: >
+  Replace this description with what the resource is and why it matters.
+publisher: Replace with the authoritative publisher
+topics: [replace-me]
+source:
+  canonical_url: https://replace-with-the-authoritative-source.example
+  identifiers:
+    doi: null
+access:
+  method: [web]
+  auth_required: false
+  auth_note: null
+  rate_limit: null
+format: [replace-me]
+coverage:
+  spatial: replace-me
+  temporal: replace-me
+  cadence: irregular
+license: replace-me
+attribution: Replace with the publisher attribution
+# observed = machine facts only. Leave every value unknown until the first
+# probe; scripts/check_links.py fills the block from an actual probe.
+observed:
+  checked: null
+  reachable: null
+  http_status: null
+  final_url: null
+  redirect_chain: []
+  fingerprint_result: no-baseline
+status: live
+status_since: null
+status_source: curator
+recovery: []
+notes: null

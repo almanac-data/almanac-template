@@ -1,57 +1,7 @@
 {
   "name": "Example Almanac",
   "description": "An open, versioned index of public example data.",
-  "count": 1,
-  "by_status": {
-    "dark": 1
-  },
-  "entries": [
-    {
-      "id": "example-dataset",
-      "type": "dataset",
-      "title": "Example Dataset (replace this with a real entry)",
-      "description": "A placeholder catalog entry so the index builds and CI passes on a fresh template. Delete this file once you have added your first real dataset.\n",
-      "publisher": "Example Agency",
-      "topics": [
-        "example"
-      ],
-      "source": {
-        "canonical_url": "https://example.org",
-        "identifiers": {
-          "doi": null
-        }
-      },
-      "access": {
-        "method": [
-          "web"
-        ],
-        "auth_required": false,
-        "auth_note": null,
-        "rate_limit": null
-      },
-      "format": [
-        "html"
-      ],
-      "coverage": {
-        "spatial": "global",
-        "temporal": "n/a",
-        "cadence": "static"
-      },
-      "license": "CC0-1.0",
-      "attribution": "Example Agency",
-      "observed": {
-        "checked": null,
-        "reachable": null,
-        "http_status": null,
-        "final_url": null,
-        "redirect_chain": [],
-        "fingerprint_result": "no-baseline"
-      },
-      "status": "dark",
-      "status_since": null,
-      "status_source": "curator",
-      "recovery": [],
-      "notes": "This is a template stub, intentionally marked dark so it is not treated as a live dataset. See SETUP.md for how to stand up your own almanac vertical, then replace and delete this entry before adding real datasets.\n"
-    }
-  ]
+  "count": 0,
+  "by_status": {},
+  "entries": []
 }
