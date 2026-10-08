@@ -22,19 +22,20 @@ coverage:
   cadence: static
 license: CC0-1.0
 attribution: "Example Agency"
-# observed = machine facts only. A curator sets `checked` and leaves the rest
-# null; scripts/check_links.py fills them in from an actual probe.
+# observed = machine facts only. Leave every value unknown until the first
+# probe; scripts/check_links.py fills the block from an actual probe.
 observed:
-  checked: '1970-01-01'  # replace with the date of your first real probe
+  checked: null
   reachable: null
   http_status: null
   final_url: null
   redirect_chain: []
   fingerprint_result: no-baseline
-status: live
+status: dark
 status_since: null
 status_source: curator
 recovery: []
 notes: >
-  This is a template stub. See SETUP.md for how to stand up your own almanac
-  vertical, then replace this entry with real datasets.
+  This is a template stub, intentionally marked dark so it is not treated as a
+  live dataset. See SETUP.md for how to stand up your own almanac vertical,
+  then replace and delete this entry before adding real datasets.

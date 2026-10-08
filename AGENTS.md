@@ -56,7 +56,8 @@ verticals a guide pointing at files they do not have.
 4. **Never hand-edit `catalog.json`.** It is generated. Edit the YAML, regenerate.
 5. **Verify before you assert.** Do not invent `observed.checked` dates or URL reachability.
    If you can reach the network, confirm `source.canonical_url` and set `observed.checked` to
-   today (`YYYY-MM-DD`). If you cannot verify, say so in the PR — do not fabricate.
+   today (`YYYY-MM-DD`). For a new entry, leave `observed.checked: null` until the first machine
+   probe; if you cannot verify something, say so in the PR — do not fabricate.
    **`observed` is machine-written.** Set `checked` and leave `reachable`, `http_status`, and
    `final_url` null — only `scripts/check_links.py --write-observed` fills those, from a real
    probe. Recording your own `curl` output there disguises a human check as a machine one.
