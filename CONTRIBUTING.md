@@ -5,19 +5,25 @@ reviewable: **one dataset = one file = one pull request.**
 
 ## Add a dataset
 
-1. Copy `catalog/example-dataset.yaml` as a starting point.
-2. Create `catalog/<your-id>.yaml`. The filename (minus `.yaml`) **must** equal the entry's `id`,
+1. Create `catalog/<your-id>.yaml`. In a fresh `almanac-template` checkout, you may copy
+   `catalog/example-dataset.yaml` as a starting point; verticals that have removed the template
+   stub should create the file directly. The filename (minus `.yaml`) **must** equal the entry's `id`,
    a kebab-case slug (e.g. `agency-sea-level-rise`).
-3. Fill in every required field (see `schema/catalog-entry.schema.json`). Required:
+2. Fill in every required field (see `schema/catalog-entry.schema.json`). Required:
    `id, type, title, description, publisher, topics, source, access, status, observed, license,
    attribution`.
-4. Verify the source URL yourself and set `observed.checked` to today's date (`YYYY-MM-DD`).
-   **Leave the rest of `observed` null.** `reachable`, `http_status`, and `final_url` are machine
-   facts — only `scripts/check_links.py --write-observed` fills them, from an actual probe.
-   Transcribing your own `curl` output into those fields makes a human check look like a
-   machine one, which is exactly the distinction the block exists to preserve. Put your
-   verification in the PR description instead; the next reachability sweep will fill the
-   fields in.
+3. If you copied an existing entry, replace the **entire** `observed` block before submitting it:
+   set `observed.checked` to today's date (`YYYY-MM-DD`), set `reachable`, `http_status`, and
+   `final_url` to `null`, set `redirect_chain: []`, and set `fingerprint_result: no-baseline`.
+   Remove any copied `fingerprint` block, set `status_source: curator`, and reset
+   `status_since: null`. This prevents facts from the source entry from being submitted as facts
+   about the new resource.
+4. Verify the source URL yourself. **Leave the rest of `observed` null.** `reachable`,
+   `http_status`, and `final_url` are machine facts — only `scripts/check_links.py --write-observed`
+   fills them, from an actual probe. Transcribing your own `curl` output into those fields makes a
+   human check look like a machine one, which is exactly the distinction the block exists to
+   preserve. Put your verification in the PR description instead; the next reachability sweep will
+   fill the fields in.
 5. Run the checks locally:
    ```bash
    pip install -r requirements.txt

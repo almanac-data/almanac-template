@@ -40,15 +40,15 @@
       "license": "CC0-1.0",
       "attribution": "Example Agency",
       "observed": {
-        "checked": "2026-08-23",
-        "reachable": true,
-        "http_status": 200,
-        "final_url": "https://example.org/",
+        "checked": "1970-01-01",
+        "reachable": null,
+        "http_status": null,
+        "final_url": null,
         "redirect_chain": [],
         "fingerprint_result": "no-baseline"
       },
       "status": "live",
-      "status_since": "2026-07-01",
+      "status_since": null,
       "status_source": "curator",
       "recovery": [],
       "notes": "This is a template stub. See SETUP.md for how to stand up your own almanac vertical, then replace this entry with real datasets.\n"

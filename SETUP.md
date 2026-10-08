@@ -37,9 +37,14 @@ In **`.github/ISSUE_TEMPLATE/config.yml`**, replace `YOUR-ALMANAC` with your rep
 
 1. Copy `catalog/example-dataset.yaml` to `catalog/<your-id>.yaml`.
 2. Fill in every required field (the filename minus `.yaml` must equal the `id`).
-3. Verify the canonical URL yourself; set `observed.checked` to today (`YYYY-MM-DD`).
-4. Delete `catalog/example-dataset.yaml`.
-5. Regenerate and validate:
+3. Replace the **entire** copied `observed` block: set `checked` to today's date
+   (`YYYY-MM-DD`), leave `reachable`, `http_status`, and `final_url` as `null`, set
+   `redirect_chain: []`, and set `fingerprint_result: no-baseline`. Remove any copied
+   `fingerprint` block, set `status_source: curator`, and reset `status_since: null`.
+4. Verify the canonical URL yourself. The reachability sweep will populate the remaining
+   machine facts from an actual probe.
+5. Delete `catalog/example-dataset.yaml`.
+6. Regenerate and validate:
    ```bash
    pip install -r requirements.txt
    python scripts/validate.py

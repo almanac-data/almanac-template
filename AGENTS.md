@@ -109,8 +109,10 @@ python scripts/check_links.py --headless
 
 The headless rung only ever *upgrades* a blocked source to `ok`; it never flags one as dead.
 
-To add a dataset: copy `catalog/example-dataset.yaml`, fill every required field, validate,
-rebuild the index, open a PR. See `CONTRIBUTING.md` for the full checklist.
+To add a dataset: create `catalog/<id>.yaml`, fill every required field, validate, rebuild the
+index, and open a PR. In a fresh `almanac-template` checkout, `catalog/example-dataset.yaml` is
+available as a starting point; a vertical may remove it after adding its first real entry. See
+`CONTRIBUTING.md` for the full checklist.
 
 ## Licensing
 
