@@ -24,7 +24,7 @@ reviewable: **one dataset = one file = one pull request.**
    python scripts/validate.py
    python scripts/build_index.py
    ```
-6. Open a PR. CI runs validation; a green check is required to merge.
+5. Open a PR. CI runs validation; a green check is required to merge.
 
 No coding? You can also **[suggest a dataset](../../issues/new/choose)** with a short form and a
 curator will turn it into an entry.
