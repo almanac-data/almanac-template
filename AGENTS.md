@@ -56,9 +56,7 @@ verticals a guide pointing at files they do not have.
 4. **Never hand-edit `catalog.json`.** It is generated. Edit the YAML, regenerate.
 5. **Verify before you assert.** Do not invent `observed.checked` dates or URL reachability.
    If you can reach the network, confirm `source.canonical_url` and set `observed.checked` to
-   today (`YYYY-MM-DD`). The starter at `docs/catalog-entry.example.yaml` uses `null` only as
-   documentation; replace it with today's date in a real catalog entry after the first machine
-   probe. If you cannot verify something, say so in the PR — do not fabricate.
+   today (`YYYY-MM-DD`). If you cannot verify something, say so in the PR — do not fabricate.
    **`observed` is machine-written.** Set `checked` and leave `reachable`, `http_status`, and
    `final_url` null — only `scripts/check_links.py --write-observed` fills those, from a real
    probe. Recording your own `curl` output there disguises a human check as a machine one.
@@ -111,9 +109,9 @@ python scripts/check_links.py --headless
 
 The headless rung only ever *upgrades* a blocked source to `ok`; it never flags one as dead.
 
-To add a dataset: copy `docs/catalog-entry.example.yaml` to `catalog/<id>.yaml`, replace every
-example value, fill every required field, validate, rebuild the index, and open a PR. See
-`CONTRIBUTING.md` for the full checklist.
+To add a dataset: copy an existing entry (or `docs/catalog-entry.example.yaml` where present)
+to `catalog/<id>.yaml`, replace every example value, fill every required field, validate, rebuild
+the index, and open a PR. See `CONTRIBUTING.md` for the full checklist.
 
 ## Licensing
 

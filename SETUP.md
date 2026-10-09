@@ -37,19 +37,19 @@ In **`.github/ISSUE_TEMPLATE/config.yml`**, replace `YOUR-ALMANAC` with your rep
 
 1. Copy `docs/catalog-entry.example.yaml` to `catalog/<your-id>.yaml`.
 2. Fill in every required field (the filename minus `.yaml` must equal the `id`).
-3. Replace the **entire** copied `observed` block: set `checked` to the date of the first
-   machine probe (`YYYY-MM-DD`), leave `reachable`, `http_status`, and `final_url` as `null`, set
+3. Verify the canonical URL yourself and set `observed.checked` to today's date (`YYYY-MM-DD`).
+   Replace the **entire** copied `observed` block: leave `reachable`, `http_status`, and `final_url` as `null`, set
    `redirect_chain: []`, and set `fingerprint_result: no-baseline`. Remove any copied
    `fingerprint` block, set `status_source: curator`, and reset `status_since: null`.
-4. Verify the canonical URL yourself, but do not fabricate machine facts. The reachability sweep
-   will populate the remaining machine facts from an actual probe.
-5. Regenerate and validate:
+   The remaining machine facts are filled by `scripts/check_links.py --write-observed` from an
+   actual probe; do not transcribe your own `curl` output into them.
+4. Regenerate and validate:
    ```bash
    pip install -r requirements.txt
    python scripts/validate.py
    python scripts/build_index.py
    ```
-6. Commit `catalog/<your-id>.yaml` **and** the updated `catalog.json`. Open a PR; CI gates it.
+5. Commit `catalog/<your-id>.yaml` **and** the updated `catalog.json`. Open a PR; CI gates it.
 
 ## 5. Turn on the monitor
 

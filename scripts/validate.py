@@ -41,8 +41,8 @@ def main() -> int:
 
     files = sorted(CATALOG.glob("*.yaml"))
     if not files:
-        print("OK — 0 entries valid")
-        return 0
+        print("no catalog entries found", file=sys.stderr)
+        return 1
 
     for path in files:
         entry = _stringify_dates(yaml.safe_load(path.read_text()))
