@@ -43,13 +43,13 @@ In **`.github/ISSUE_TEMPLATE/config.yml`**, replace `YOUR-ALMANAC` with your rep
    `fingerprint` block, set `status_source: curator`, and reset `status_since: null`.
    The remaining machine facts are filled by `scripts/check_links.py --write-observed` from an
    actual probe; do not transcribe your own `curl` output into them.
-4. Regenerate and validate:
+4. Delete `catalog/example-dataset.yaml`.
+5. Regenerate and validate:
    ```bash
    pip install -r requirements.txt
    python scripts/validate.py
    python scripts/build_index.py
    ```
-5. Delete `catalog/example-dataset.yaml`.
 6. Commit `catalog/<your-id>.yaml` **and** the updated `catalog.json`. Open a PR; CI gates it.
 
 ## 5. Turn on the monitor
