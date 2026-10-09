@@ -26,10 +26,10 @@ coverage:
   cadence: irregular
 license: replace-me
 attribution: Replace with the publisher attribution
-# observed = machine facts only. Leave every value unknown until the first
-# probe; scripts/check_links.py fills the block from an actual probe.
+# observed = machine facts only. Verify the URL and replace checked with
+# YYYY-MM-DD before submitting; scripts/check_links.py fills the rest from a probe.
 observed:
-  checked: null
+  checked: YYYY-MM-DD
   reachable: null
   http_status: null
   final_url: null

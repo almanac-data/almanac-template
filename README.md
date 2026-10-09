@@ -18,7 +18,7 @@ public data is scattered across institutional URLs that move, rot, or quietly di
    file you must change; the schema, scripts, and CI all read from it.
 3. Work through **[SETUP.md](SETUP.md)** — a short post-instantiation checklist.
 4. Copy `docs/catalog-entry.example.yaml` to `catalog/<your-id>.yaml`, replace the example
-   values, and open a PR.
+   values, delete `catalog/example-dataset.yaml`, and open a PR.
 
 ## What's in the engine
 

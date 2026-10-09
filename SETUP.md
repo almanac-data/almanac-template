@@ -49,7 +49,8 @@ In **`.github/ISSUE_TEMPLATE/config.yml`**, replace `YOUR-ALMANAC` with your rep
    python scripts/validate.py
    python scripts/build_index.py
    ```
-5. Commit `catalog/<your-id>.yaml` **and** the updated `catalog.json`. Open a PR; CI gates it.
+5. Delete `catalog/example-dataset.yaml`.
+6. Commit `catalog/<your-id>.yaml` **and** the updated `catalog.json`. Open a PR; CI gates it.
 
 ## 5. Turn on the monitor
 
