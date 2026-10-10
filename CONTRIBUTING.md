@@ -5,26 +5,26 @@ reviewable: **one dataset = one file = one pull request.**
 
 ## Add a dataset
 
-1. Copy `catalog/example-dataset.yaml` as a starting point.
-2. Create `catalog/<your-id>.yaml`. The filename (minus `.yaml`) **must** equal the entry's `id`,
+1. Copy an existing entry (or `docs/catalog-entry.example.yaml` where present) to
+   `catalog/<your-id>.yaml` and replace every example value. The filename (minus `.yaml`)
+   **must** equal the entry's `id`,
    a kebab-case slug (e.g. `agency-sea-level-rise`).
-3. Fill in every required field (see `schema/catalog-entry.schema.json`). Required:
+2. Fill in every required field (see `schema/catalog-entry.schema.json`). Required:
    `id, type, title, description, publisher, topics, source, access, status, observed, license,
    attribution`.
-4. Verify the source URL yourself and set `observed.checked` to today's date (`YYYY-MM-DD`).
-   **Leave the rest of `observed` null.** `reachable`, `http_status`, and `final_url` are machine
-   facts — only `scripts/check_links.py --write-observed` fills them, from an actual probe.
-   Transcribing your own `curl` output into those fields makes a human check look like a
-   machine one, which is exactly the distinction the block exists to preserve. Put your
-   verification in the PR description instead; the next reachability sweep will fill the
-   fields in.
-5. Run the checks locally:
+3. Verify the source URL yourself and set `observed.checked` to today's date (`YYYY-MM-DD`).
+   Before submitting, replace the **entire** `observed` block: leave `reachable`, `http_status`,
+   and `final_url` as `null`, set `redirect_chain: []`, and set `fingerprint_result: no-baseline`.
+   Remove any copied `fingerprint` block, set `status_source: curator`, and reset
+   `status_since: null`. These are machine facts; only `scripts/check_links.py --write-observed`
+   fills them from an actual probe. Put your URL verification in the PR description instead.
+4. Run the checks locally:
    ```bash
    pip install -r requirements.txt
    python scripts/validate.py
    python scripts/build_index.py
    ```
-6. Open a PR. CI runs validation; a green check is required to merge.
+5. Open a PR. CI runs validation; a green check is required to merge.
 
 No coding? You can also **[suggest a dataset](../../issues/new/choose)** with a short form and a
 curator will turn it into an entry.

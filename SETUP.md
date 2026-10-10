@@ -35,9 +35,14 @@ In **`.github/ISSUE_TEMPLATE/config.yml`**, replace `YOUR-ALMANAC` with your rep
 
 ## 4. Add your first dataset
 
-1. Copy `catalog/example-dataset.yaml` to `catalog/<your-id>.yaml`.
+1. Copy `docs/catalog-entry.example.yaml` to `catalog/<your-id>.yaml`.
 2. Fill in every required field (the filename minus `.yaml` must equal the `id`).
-3. Verify the canonical URL yourself; set `observed.checked` to today (`YYYY-MM-DD`).
+3. Verify the canonical URL yourself and set `observed.checked` to today's date (`YYYY-MM-DD`).
+   Replace the **entire** copied `observed` block: leave `reachable`, `http_status`, and `final_url` as `null`, set
+   `redirect_chain: []`, and set `fingerprint_result: no-baseline`. Remove any copied
+   `fingerprint` block, set `status_source: curator`, and reset `status_since: null`.
+   The remaining machine facts are filled by `scripts/check_links.py --write-observed` from an
+   actual probe; do not transcribe your own `curl` output into them.
 4. Delete `catalog/example-dataset.yaml`.
 5. Regenerate and validate:
    ```bash

@@ -17,7 +17,8 @@ public data is scattered across institutional URLs that move, rot, or quietly di
 2. Edit **`almanac.config.yml`** — name, slug, description, homepage, domain. That's the only
    file you must change; the schema, scripts, and CI all read from it.
 3. Work through **[SETUP.md](SETUP.md)** — a short post-instantiation checklist.
-4. Replace `catalog/example-dataset.yaml` with your first real entry and open a PR.
+4. Copy `docs/catalog-entry.example.yaml` to `catalog/<your-id>.yaml`, replace the example
+   values, delete `catalog/example-dataset.yaml`, and open a PR.
 
 ## What's in the engine
 
