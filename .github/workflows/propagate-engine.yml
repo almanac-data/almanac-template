@@ -52,7 +52,10 @@ jobs:
           - energy-almanac
           - environment-almanac
           - health-almanac
+          - housing-almanac
           - justice-almanac
+          - labor-almanac
+          - population-almanac
           - science-almanac
           - transportation-almanac
     steps:
@@ -182,7 +185,7 @@ jobs:
           fi
 
   # A propagation that fails silently is worse than no propagation: the engine
-  # keeps moving in the template while eleven verticals quietly stop receiving
+  # keeps moving in the template while the verticals quietly stop receiving
   # it, and nothing surfaces until someone diffs by hand. That happened — the
   # ENGINE_PROPAGATION_TOKEN expired and every job died on "Bad credentials"
   # for weeks with no signal.
@@ -209,7 +212,7 @@ jobs:
           body=$(printf '%s\n' \
             "Propagation from \`almanac-template\` failed on commit \`${GITHUB_SHA}\`." \
             "" \
-            "**The eleven vertical repos are no longer receiving engine updates.** Any" \
+            "**The vertical repos are no longer receiving engine updates.** Any" \
             "schema, script, CI, or test change merged here since this started has not" \
             "reached them, and nothing else will surface that." \
             "" \
