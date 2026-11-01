@@ -34,9 +34,12 @@ scripts/validate.py                schema + filename==id + uniqueness checks (CI
 scripts/build_index.py             catalog/*.yaml -> catalog.json
 scripts/check_links.py             reachability checker (reports; writes `observed` only with --write-observed)
 scripts/alert_on_dead_links.py     turns a reachability report into GitHub issues (idempotent)
+scripts/capture_archives.py        asks Save Page Now for fresh captures; writes `recovery[]` only, with --write
 .github/workflows/ci.yml           runs validate + a stale-index guard on every PR
 .github/workflows/link-check.yml   daily reachability sweep + dead-link alerting; opens an
                                    `observed`-refresh PR when the probe sees something new
+.github/workflows/capture-archives.yml  weekly archive captures for live sources; opens a
+                                   `recovery`-refresh PR
 .github/dependabot.yml             weekly pip (minor+patch grouped) and github-actions update PRs
 ```
 

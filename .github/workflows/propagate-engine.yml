@@ -24,6 +24,7 @@ on:
       - scripts/build_index.py
       - scripts/check_links.py
       - scripts/alert_on_dead_links.py
+      - scripts/capture_archives.py
       - scripts/migrate_v1_v2.py
       - requirements.txt
       - requirements-headless.txt
@@ -31,6 +32,7 @@ on:
       - tests/test_catalog.py
       - .github/workflows/ci.yml
       - .github/workflows/link-check.yml
+      - .github/workflows/capture-archives.yml
       - .github/dependabot.yml
   workflow_dispatch: {}
 
@@ -101,6 +103,7 @@ jobs:
             scripts/build_index.py
             scripts/check_links.py
             scripts/alert_on_dead_links.py
+            scripts/capture_archives.py
             scripts/migrate_v1_v2.py
             requirements.txt
             requirements-headless.txt
@@ -108,6 +111,7 @@ jobs:
             tests/test_catalog.py
             .github/workflows/ci.yml
             .github/workflows/link-check.yml
+            .github/workflows/capture-archives.yml
             .github/dependabot.yml
           )
 
