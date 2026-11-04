@@ -16,6 +16,13 @@ access:
   auth_note: null
   rate_limit: null
 format: [html]
+recovery:
+- via: wayback
+  url: https://web.archive.org/web/20261104120025/https://example.org
+  authenticity: timestamped
+  permission: ok
+  captured: '2026-11-04'
+  notes: 'Recorded by scripts/capture_archives.py on 2026-11-04: a capture it requested from Save Page Now.'
 coverage:
   spatial: global
   temporal: "n/a"
@@ -34,7 +41,6 @@ observed:
 status: live
 status_since: "2026-07-01"
 status_source: curator
-recovery: []
 notes: >
   This is a template stub. See SETUP.md for how to stand up your own almanac
   vertical, then replace this entry with real datasets.
