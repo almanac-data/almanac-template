@@ -92,7 +92,7 @@ def test_dependabot_automerge_arms_only_minor_and_patch():
     wf = yaml.safe_load(AUTOMERGE.read_text())
     job = wf["jobs"]["automerge"]
     assert "dependabot[bot]" in job["if"]
-    arming = [s for s in job["steps"] if "--auto" in s.get("run", "")]
+    arming = [s for s in job["steps"] if "enablePullRequestAutoMerge" in s.get("run", "")]
     assert len(arming) == 1
     cond = arming[0]["if"]
     assert "semver-minor" in cond and "semver-patch" in cond

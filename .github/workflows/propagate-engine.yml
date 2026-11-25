@@ -197,7 +197,10 @@ jobs:
           fi
           # Armed with the App's token, so the merge is an ordinary push in the
           # vertical and its own workflows run on it.
-          if ! gh pr merge "$branch" --repo "almanac-data/${{ matrix.vertical }}" --auto --merge; then
+          # Arm with the auto-merge mutation itself, not `gh pr merge --auto`: when a PR has
+          # nothing pending (a repo with no required checks), gh quietly merges it on the
+          # spot, before CI has run. The mutation only ever arms, or fails and the PR waits.
+          if ! gh api graphql -f query='mutation($id:ID!){enablePullRequestAutoMerge(input:{pullRequestId:$id,mergeMethod:MERGE}){clientMutationId}}' -f id="$(gh pr view "$branch" --repo "almanac-data/${{ matrix.vertical }}" --json id -q .id)" >/dev/null; then
             echo "::warning::could not arm auto-merge in ${{ matrix.vertical }} — check"\
                  "Settings > General > Allow auto-merge there. The PR is left for a human."
           fi
