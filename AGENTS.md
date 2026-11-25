@@ -92,8 +92,21 @@ python scripts/check_links.py --write-observed && python scripts/build_index.py
 
 Rebuild the index in the same change, since `observed` is carried into `catalog.json`.
 
-The daily `link-check` workflow does this for you and proposes the result as a
-`monitor/observed-refresh` PR. **That PR only opens automatically if the repo allows it** —
+The daily `link-check` workflow does this for you and proposes the result as one rolling
+`monitor/observed-refresh` PR. When only `checked` dates moved, the PR is **routine** and
+merges itself once `test` passes (auto-merge, so the repo needs *Settings → General →
+"Allow auto-merge"*). When anything else in `observed` changed, it waits for a human and
+lists the changes in its body (`python scripts/check_links.py --observed-changes-since HEAD`
+prints the same list locally).
+
+**What merges itself, and what waits.** Every bot PR goes through the default branch's
+ruleset (a PR and a passing `test`); none bypasses it. These arm auto-merge and need no one:
+a routine observed refresh, a `monitor/archive-refresh` PR (`recovery[]` candidates only), an
+engine propagation PR (already reviewed in the template), and Dependabot minor and patch
+bumps (`.github/workflows/dependabot-automerge.yml`). These wait for a human: an observed
+refresh where a source answered differently, a Dependabot major, and any of the above whose
+CI fails. All of it needs *Settings → General → "Allow auto-merge"*; where that is off, the
+PR is opened as before and the run says so. **That PR only opens automatically if the repo allows it** —
 *Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests"*,
 which is off by default and which a workflow's `permissions:` block cannot grant. With it
 off the job still probes, still writes, and still pushes the branch; it just logs a warning

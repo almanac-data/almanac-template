@@ -1,8 +1,11 @@
 name: propagate-engine
 
 # Pushes engine files (schema, scripts, CI, deps) out to every vertical repo
-# whenever they change on main, opening one PR per vertical. Never auto-merges —
-# each vertical's own CI (also propagated) is the gate a human reviews before merge.
+# whenever they change on main, opening one PR per vertical with auto-merge armed.
+# The change was already reviewed and merged here; each vertical's own CI (also
+# propagated) is the gate, and a PR whose CI fails — a schema change that needs a
+# catalog migration, say — simply stays open for a human. Needs "Allow auto-merge"
+# on each vertical; where it is off, the job warns and the PR waits.
 #
 # Requires the willow-ci GitHub App (id 4749508) installed on almanac-data, plus
 # the org variable WILLOW_CI_APP_ID and the org secret WILLOW_CI_PRIVATE_KEY.
@@ -34,6 +37,7 @@ on:
       - .github/workflows/link-check.yml
       - .github/workflows/capture-archives.yml
       - .github/dependabot.yml
+      - .github/workflows/dependabot-automerge.yml
   workflow_dispatch: {}
 
 permissions:
@@ -114,6 +118,7 @@ jobs:
             .github/workflows/link-check.yml
             .github/workflows/capture-archives.yml
             .github/dependabot.yml
+            .github/workflows/dependabot-automerge.yml
           )
 
           # Engine paths a specific vertical owns locally, as "vertical:path".
@@ -186,9 +191,15 @@ jobs:
             gh pr create \
               --repo "almanac-data/${{ matrix.vertical }}" \
               --title "chore(engine): propagate changes from almanac-template" \
-              --body "Automated propagation of engine files (schema, scripts, CI, deps) from almanac-data/almanac-template@${GITHUB_SHA}. This PR does not auto-merge — check the CI run below before merging. A schema change may require migrating existing catalog entries." \
+              --body "Automated propagation of engine files (schema, scripts, CI, deps) from almanac-data/almanac-template@${GITHUB_SHA}. This PR merges itself once CI passes; the change was reviewed in the template. If CI fails here — a schema change that needs existing catalog entries migrated, say — it stays open for a human." \
               --head "$branch" \
               --base main
+          fi
+          # Armed with the App's token, so the merge is an ordinary push in the
+          # vertical and its own workflows run on it.
+          if ! gh pr merge "$branch" --repo "almanac-data/${{ matrix.vertical }}" --auto --merge; then
+            echo "::warning::could not arm auto-merge in ${{ matrix.vertical }} — check"\
+                 "Settings > General > Allow auto-merge there. The PR is left for a human."
           fi
 
   # A propagation that fails silently is worse than no propagation: the engine
