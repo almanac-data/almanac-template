@@ -92,8 +92,12 @@ python scripts/check_links.py --write-observed && python scripts/build_index.py
 
 Rebuild the index in the same change, since `observed` is carried into `catalog.json`.
 
-The daily `link-check` workflow does this for you and proposes the result as a
-`monitor/observed-refresh` PR. **That PR only opens automatically if the repo allows it** —
+The daily `link-check` workflow does this for you and proposes the result as one rolling
+`monitor/observed-refresh` PR. When only `checked` dates moved, the PR is **routine** and
+merges itself once `test` passes (auto-merge, so the repo needs *Settings → General →
+"Allow auto-merge"*). When anything else in `observed` changed, it waits for a human and
+lists the changes in its body (`python scripts/check_links.py --observed-changes-since HEAD`
+prints the same list locally). **That PR only opens automatically if the repo allows it** —
 *Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests"*,
 which is off by default and which a workflow's `permissions:` block cannot grant. With it
 off the job still probes, still writes, and still pushes the branch; it just logs a warning
