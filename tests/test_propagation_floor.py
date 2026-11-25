@@ -75,3 +75,25 @@ def test_template_only_files_are_not_propagated():
         assert rel not in copied, f"{rel} is hub-only and must not reach a vertical"
     # No directory-wide entry could sweep them in either.
     assert not any(p.endswith("/") or "*" in p for p in copied)
+
+
+AUTOMERGE = ROOT / ".github" / "workflows" / "dependabot-automerge.yml"
+
+
+def test_dependabot_automerge_is_propagated():
+    wf = _workflow()
+    rel = ".github/workflows/dependabot-automerge.yml"
+    assert rel in _trigger_paths(wf)
+    assert rel in _copied_paths(wf)
+
+
+def test_dependabot_automerge_arms_only_minor_and_patch():
+    # A major is where breaking changes live; it must always wait for a human.
+    wf = yaml.safe_load(AUTOMERGE.read_text())
+    job = wf["jobs"]["automerge"]
+    assert "dependabot[bot]" in job["if"]
+    arming = [s for s in job["steps"] if "--auto" in s.get("run", "")]
+    assert len(arming) == 1
+    cond = arming[0]["if"]
+    assert "semver-minor" in cond and "semver-patch" in cond
+    assert "semver-major" not in cond

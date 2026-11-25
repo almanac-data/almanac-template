@@ -202,7 +202,7 @@ jobs:
           elif [ -z "$APP_TOKEN" ]; then
             echo "::warning::routine refresh, but without the willow-ci token CI never runs"\
                  "on PR #$pr, so it cannot merge itself."
-          elif ! gh pr merge "$pr" --auto --rebase; then
+          elif ! gh pr merge "$pr" --auto --merge; then
             echo "::warning::could not enable auto-merge on PR #$pr — check Settings >"\
                  "General > Allow auto-merge. The PR is open for a human instead."
           fi
