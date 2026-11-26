@@ -106,7 +106,9 @@ engine propagation PR (already reviewed in the template), and Dependabot minor a
 bumps (`.github/workflows/dependabot-automerge.yml`). These wait for a human: an observed
 refresh where a source answered differently, a Dependabot major, and any of the above whose
 CI fails. All of it needs *Settings → General → "Allow auto-merge"*; where that is off, the
-PR is opened as before and the run says so. **That PR only opens automatically if the repo allows it** —
+PR is opened as before and the run says so. A PR waiting to merge itself that falls behind the default branch
+is brought up to date by `.github/workflows/update-bot-prs.yml` (on every push to the default
+branch, and hourly), so the ruleset's up-to-date requirement never strands it. **That PR only opens automatically if the repo allows it** —
 *Settings → Actions → General → "Allow GitHub Actions to create and approve pull requests"*,
 which is off by default and which a workflow's `permissions:` block cannot grant. With it
 off the job still probes, still writes, and still pushes the branch; it just logs a warning

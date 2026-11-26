@@ -97,3 +97,23 @@ def test_dependabot_automerge_arms_only_minor_and_patch():
     cond = arming[0]["if"]
     assert "semver-minor" in cond and "semver-patch" in cond
     assert "semver-major" not in cond
+
+
+UPDATER = ROOT / ".github" / "workflows" / "update-bot-prs.yml"
+
+
+def test_update_bot_prs_is_propagated():
+    wf = _workflow()
+    rel = ".github/workflows/update-bot-prs.yml"
+    assert rel in _trigger_paths(wf)
+    assert rel in _copied_paths(wf)
+
+
+def test_update_bot_prs_touches_only_armed_prs_with_the_app_token():
+    # Unarmed PRs belong to a human; and an update pushed with GITHUB_TOKEN would
+    # never re-run CI, leaving the PR stuck.
+    wf = yaml.safe_load(UPDATER.read_text())
+    steps = wf["jobs"]["update"]["steps"]
+    run = next(s for s in steps if "update-branch" in s.get("run", ""))
+    assert "auto_merge != null" in run["run"]
+    assert run["env"]["GH_TOKEN"] == "${{ steps.app-token.outputs.token }}"
