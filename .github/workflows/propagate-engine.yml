@@ -38,6 +38,7 @@ on:
       - .github/workflows/capture-archives.yml
       - .github/dependabot.yml
       - .github/workflows/dependabot-automerge.yml
+      - .github/workflows/update-bot-prs.yml
   workflow_dispatch: {}
 
 permissions:
@@ -119,6 +120,7 @@ jobs:
             .github/workflows/capture-archives.yml
             .github/dependabot.yml
             .github/workflows/dependabot-automerge.yml
+            .github/workflows/update-bot-prs.yml
           )
 
           # Engine paths a specific vertical owns locally, as "vertical:path".
